@@ -2,7 +2,7 @@
 
 namespace ArdalisRatingWithSolid.Policies
 {
-    public class Rater
+    public abstract class Rater
     {
         protected readonly RatingEngine _engine;
         protected readonly ConsoleLogger _logger;
@@ -13,9 +13,6 @@ namespace ArdalisRatingWithSolid.Policies
             _logger = logger;
         }
 
-        public virtual void Rate(Policy policy)
-        {
-            throw new ArgumentException("Unknown policy type");
-        }
+        public abstract void Rate(Policy policy);
     }
 }
