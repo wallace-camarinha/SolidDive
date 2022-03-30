@@ -4,13 +4,12 @@ namespace ArdalisRatingWithSolid.Policies
 {
     public abstract class Rater
     {
-        protected readonly RatingEngine _engine;
-        protected readonly ConsoleLogger _logger;
+        protected readonly IRatingUpdater _ratingUpdater;
+        public ILogger Logger { get; set; } = new ConsoleLogger();
 
-        public Rater(RatingEngine engine, ConsoleLogger logger)
+        public Rater(IRatingUpdater ratingUpdater)
         {
-            _engine = engine;
-            _logger = logger;
+            _ratingUpdater = ratingUpdater;
         }
 
         public abstract void Rate(Policy policy);

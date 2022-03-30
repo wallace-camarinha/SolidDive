@@ -6,33 +6,30 @@
     /// </summary>
     public class RatingEngine
     {
+        public IRatingContext Context { get; set; } = new DefaultRatingContext();
         public decimal Rating { get; set; }
-        public void Rate()
+
+        public RatingEngine()
         {
-            Logger.Log("Starting rate.");
-            Logger.Log("Loading policy.");
-
-            // load policy - open file policy.json
-            string policyJson = PolicySource.GetPolicyFromSource();
-
-            // De-serialize JSON string to a Policy type 
-            Policy policy = PolicySerializer.GetPolicyFromJsonString(policyJson);
-
-            var factory = new RaterFactory();
-
-            var rater = factory.Create(policy, this);
-            rater.Rate(policy);
-
-            Logger.Log("Rating completed.");
+            Context.Engine = this;
         }
 
-        // Isolate the logging responsibility to a Logger class
-        public ConsoleLogger Logger { get; set; } = new ConsoleLogger();
+        public void Rate()
+        {
+            Context.Log("Starting rate.");
+            Context.Log("Loading policy.");
 
-        // Isolate the Persistence responsibility to a FilePolicySource class
-        public FilePolicySource PolicySource { get; set; } = new FilePolicySource();
+            // load policy - open file policy.json
+            var policyJson = Context.LoadPolicyFromFile();
 
-        // Isolate the Deserializer responsibility to a JsonPolicySerializer class
-        public JsonPolicySerializer PolicySerializer { get; set; } = new JsonPolicySerializer();
+            // De-serialize JSON string to a Policy type 
+            var policy = Context.GetPolicyFromJsonString(policyJson);
+
+            var rater = Context.CreateRaterForPolicy(policy, Context);
+
+            rater.Rate(policy);
+
+            Context.Log("Rating completed.");
+        }
     }
 }
